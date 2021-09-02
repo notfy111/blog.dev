@@ -1,6 +1,7 @@
 ---
 title: "Coin Sum"
 date: 2021-09-02T16:26:09-04:00
-draft: true
+draft: false
 ---
 
+Second post here
