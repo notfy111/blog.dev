@@ -1,0 +1,7 @@
+[submodule "everfengblog/public"]
+	path = everfengblog/public
+	url = https://github.com/notfy111/blogs.git
+	branch = main
+[submodule "everfengblog/everfengblog/themes/LoveIt"]
+	path = everfengblog/everfengblog/themes/LoveIt
+	url = https://github.com/notfy111/blogs.git
