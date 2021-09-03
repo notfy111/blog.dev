@@ -3,7 +3,8 @@ title: "10001st Prime"
 date: 2021-09-02T16:10:45-04:00
 draft: false
 ---
-Question 7 from Euler.com
+
+Prime and its magic
 
 ## Question Statement
 This question comes from Euler.com, withe question ID 7. 
