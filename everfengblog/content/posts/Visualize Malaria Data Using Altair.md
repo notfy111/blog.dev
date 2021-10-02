@@ -4,21 +4,78 @@ date: 2021-10-01T15:39:23-04:00
 draft: False
 ---
 ## Background
-Malaria may not be a very familiar disease to people in those more developed areas of the globe. However, at places where the climate is suitable for mosquitoes to reproduce, public health practices are most advanced and population density is high, Malaria has been a leading factor of death cases. The most horrific part about this disease that, it only takes on mosquito bite to be infected. How has the world tackled this life-threatening diseas, and what countires have made impressive progress? We will find out from visualizing three sets of Malaria data using Altair. 
+Malaria may not be a very familiar disease to people in those more developed areas of the globe. However, at places where the climate is suitable for mosquitoes to reproduce, public health practices are most advanced and population density is high, Malaria has been a leading factor of death cases. The most horrific part about this disease that, it only takes on mosquito bite to be infected. How has the world tackled this life-threatening diseas, and what countires have made impressive progress? We will find out from visualizing three sets of Malaria data using [Altair](https://altair-viz.github.io).
 
 ## Data 
+To tackle this problem, we have three datasets on hand. *Malaria Deaths* describe the death cases in a country in a given year, and it covers the time span from 1990 to 2016. *Malaria Deaths Age* dataset has the same information, but breaks down death cases by age groups from under 5 years, 5 - 14, 15 - 49, 50 - 69, and 70 or older. Both datasets have observations on 228 countries. *Malaria Incident* covers the data from year 2000 to 2015, and provides information about Malaria incidents per 1000 at risk population. For this dataset, we have observations on 127 countries.
 
 ## Tool
+In order to analyze the data to gain insights about Malaria as a public health threat, here we adopt a python library called Altair to visualize the data. Compared to other python-powered visualization libraries, Altair does not have a extensive user group yet, which means that we may not have as much materials to reference to. However, the advantage of Altair is three-fold:
+* It generates javascript-based visualizations which is highly interactive.
+* Syntax follow The Grammer of Graphics and is easy to understand and follow.
+* Nice graphics and aesthetics. In this blog post, I will also share the code for generating these plots, hope you find them useful!
+
 
 ## Visualization and insights
+Undoubtedly, these three datasets contain a lot of information across a significant period of time. It became important to understand clearly: where do we want to start, and what do we want to seek from the data? 
+Given the life-threatening nature of Malaria, a few questions can prove more valuable than others: in which countires is he situation of Malaria most pressing? Among those, which age group is most vulnerable to this diseas? How have those countries responded to this challenge since the start of the 21st century? With those questions in mind, we can embark on our data journey.
 
-```python
-require 'redcarpet'
-markdown = Redcarpet.new("Hello World!")
-puts markdown.to_html
+For this analysis, we have chosen to subset the data to only include the 10 countries that had the most Malaria death cases in 1990, which we assume is a fair anchor for identifying countries that had Malaria as a the most pressing public health issue. In order to see clearly how do the death cases increase or decrease in the past two decades and the overall Malaria situation, we have created the visualiation below using this block of code:
 ```
+import altair as alt
 
-## Visualization and insights
+source = subset_top_10
+
+selector = alt.selection_multi(empty='all', fields=['Entity'])
+selection = alt.selection_multi(fields=['Entity'], bind='legend')
+
+base = alt.Chart(source).properties(
+    width=250,
+    height=250
+).add_selection(selection)
+
+overall_mean = base.mark_bar(filled=True, size=10).encode(
+    x=alt.X('Entity', title="Country"),
+    y=alt.Y('mean(Death/100,000):Q',
+            scale=alt.Scale(domain=[0,250])),
+        tooltip="Entity:N",
+    color=alt.condition(selector | selection,
+                        'Entity',
+                        alt.value('lightgray'),
+                        scale=alt.Scale(scheme = 'category10')),
+).add_selection(
+    selection,selector
+
+summed_cases = base.mark_line(opacity=0.5, thickness=1).encode(
+    x=alt.X('Year:O'),
+    y=alt.Y('Death/100,000:Q',
+            scale=alt.Scale(domain=[0,250])),
+        tooltip="Entity:N",
+    color=alt.condition(selector | selection,
+                        'Entity',
+                        alt.value('lightgray'),
+                        scale=alt.Scale(scheme = 'category10'),
+                        legend = alt.Legend(title = "Country"))
+).transform_filter(
+    selection
+).add_selection(
+    selection,selector
+)
+)
+visual_death_top10 = alt.hconcat(overall_mean , summed_cases).properties(
+    title = "Death Cases in Top 10 Malaria-Hard-Hit Countries" 
+    ).configure_title(
+    fontSize=15,
+    anchor='middle',
+    color='Black'
+)
+```
+This visualization is interactive. We can easily click on a country on the left panel and get the highlight of its deaths cases curve on the right panel. If we are interested in multiple countries, `shift + click` allows multi-select and we can compare multiple countries simultaneously,
+
+From this visualization, it is easy to notice that Uganda has definetely made some great and steady progress curtailing Malaria. Being the country that had the highest number of Malaria infection, it sucessfully reduced the case to about 1-fourth of what it had two decades ago. In contrast, countries such as Mali and Niger, althought having a relatively lower average death cases, did not have a significant reduction of death cases compared to 1990.
+
+Interestingly, Burkina Faso and Sierra Leone had a similar spike in death around 2004, which might be traced back to some of their major national practices back in that time. 
+
 {{< rawhtml >}}
 <head>
   <style>
@@ -54,6 +111,11 @@ puts markdown.to_html
 </body>
 {{< /rawhtml >}}
 
+After getting a sense of the overall Malaria problem in these countries, now it is worth investigating the age groups that are primarily vulnerable in front of Malaria. 
+This interactie visualization has the lower panel as the total death cases by country, and the upper panel as the break down of death cases by age group from 1990 to 2016. As we interact with the graph, it is clear that 0 - 5 age group is consistenly being the most vulnerable group against Malaria. This might be caused by the fact that this group has the lowest mobility, and it is very easy for them to be bitten by a mosquito when sleeping (also given the fact that at this age they have to spend most of their time sleeping). It also indirectly reflects that the child-care practices and resources are scarce in these countries. 
+Also surprisingly, almost half of the 10 countries have an increasing curve for the death cases in the 0 - 5 age group compared to 1990. This is not only alarming, but also flags a need to put in much more efforts and recourses to this group which is also the youngest and powerless. 
+
+
 {{< rawhtml >}}
 </head>
 <body>
@@ -80,7 +142,8 @@ puts markdown.to_html
 </body>
 {{< /rawhtml >}}
 
-
+Seeing all these staggering results, at this point it might be good to stop and think for a second: is this analysis doing justice for these countries? The next visualization may reveal some other insights.
+Below is the graph what depicts the incident of Malaria among 100,000 at risk population frm 2000 to 2015. Here, in fact we see that all countries have had good progress in the time frame, which means that for people at risk, the odds of them getting Malaria has been reduced. 
 
 
 {{< rawhtml >}}
@@ -107,3 +170,6 @@ puts markdown.to_html
   </script>
 </body>
 {{< /rawhtml >}}
+
+## Final Thoughts
+Good visualization is powerful, and it helps people tell a story from it, and to expain things that may have not been easily knowable without it. In this analysis, we have looked at the deaths cases, incidents, and also the break-down of death cases by age group. Using our questions to lead the investigation, we have discovered which countries have made the best progress curtailing Malaria, and which age group should we pay more attention and to save their lives from this cruel disease. Data visualization is a tool the empowers analysis, and alo empowers data scientists to have a broad horizon.
