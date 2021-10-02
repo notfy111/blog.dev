@@ -19,10 +19,8 @@ puts markdown.to_html
 ```
 
 ## Visualization and insights
-
-{ {< rawhtml >}}
-<div id="vis"></div>
+{{< rawhtml >}}
   <p class="speshal-fancy-custom">
     This is <strong>raw HTML</strong>, inside Markdown.
   </p>
-{ {< /rawhtml >}}
+{{< /rawhtml >}}
