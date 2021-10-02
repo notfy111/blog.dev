@@ -11,7 +11,7 @@ theme = "LoveIt"
 [author]
   name = "Evers"
   email = "yf129@duke.edu"
-  link = "evers-feng.com"
+  link = "https://evers-feng.com"
 
 # Home page config
   [params.home]
@@ -23,9 +23,9 @@ theme = "LoveIt"
       # Gravatar Email for preferred avatar in home page
       gravatarEmail = ""
       # URL of avatar shown in home page
-      avatarURL = "/images/IMG_2037.png"
+      avatarURL = "images/IMG_2037.png"
       # LoveIt CHANGED | 0.2.7 title shown in home page (HTML format is supported)
-      title = ""
+      title = "Yi (Evers) Feng"
       # subtitle shown in home page
       subtitle = "Blogs are overrated, but not this one ;)"
       # whether to use typeit animation for subtitle
