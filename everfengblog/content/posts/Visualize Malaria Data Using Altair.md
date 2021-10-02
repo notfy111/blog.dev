@@ -21,7 +21,9 @@ Undoubtedly, these three datasets contain a lot of information across a signific
 Given the life-threatening nature of Malaria, a few questions can prove more valuable than others: in which countires is he situation of Malaria most pressing? Among those, which age group is most vulnerable to this diseas? How have those countries responded to this challenge since the start of the 21st century? With those questions in mind, we can embark on our data journey.
 
 For this analysis, we have chosen to subset the data to only include the 10 countries that had the most Malaria death cases in 1990, which we assume is a fair anchor for identifying countries that had Malaria as a the most pressing public health issue. In order to see clearly how do the death cases increase or decrease in the past two decades and the overall Malaria situation, we have created the visualiation below using this block of code:
-```
+
+```python
+{
 import altair as alt
 
 source = subset_top_10
@@ -69,13 +71,47 @@ visual_death_top10 = alt.hconcat(overall_mean , summed_cases).properties(
     anchor='middle',
     color='Black'
 )
+}
 ```
+
 This visualization is interactive. We can easily click on a country on the left panel and get the highlight of its deaths cases curve on the right panel. If we are interested in multiple countries, `shift + click` allows multi-select and we can compare multiple countries simultaneously,
 
 From this visualization, it is easy to notice that Uganda has definetely made some great and steady progress curtailing Malaria. Being the country that had the highest number of Malaria infection, it sucessfully reduced the case to about 1-fourth of what it had two decades ago. In contrast, countries such as Mali and Niger, althought having a relatively lower average death cases, did not have a significant reduction of death cases compared to 1990.
 
 Interestingly, Burkina Faso and Sierra Leone had a similar spike in death around 2004, which might be traced back to some of their major national practices back in that time. 
+```python
+{
+pts = alt.selection(type="single", encodings=['x'])
 
+line = alt.Chart(top_10_by_age).mark_line().encode(
+    x=alt.X('year:O'),
+    y=alt.Y('sum(deaths):Q',title = "Total Death Cases"),
+    color='age_group',
+    strokeDash='age_group',
+    order = 'year'
+).transform_filter(
+    pts)
+bar = alt.Chart(top_10_by_age).mark_bar().encode(
+    x=alt.X('entity:N', title = "Country"),
+    y=alt.Y('sum(deaths)', title = "Total Death Cases"),
+    color=alt.condition(pts, alt.ColorValue("skyblue"), alt.ColorValue("grey"))
+).properties(
+    width=550,
+    height=200
+).add_selection(pts)
+
+death_by_age_top10 = alt.vconcat(
+    line,
+    bar
+).properties(
+    title = "Death Cases in Top 10 Malaria-Hard-Hit Countries by Age Group" 
+    ).configure_title(
+    fontSize=15,
+    anchor='middle',
+    color='Black'
+)
+}
+```
 {{< rawhtml >}}
 <head>
   <style>
@@ -115,7 +151,41 @@ After getting a sense of the overall Malaria problem in these countries, now it 
 This interactie visualization has the lower panel as the total death cases by country, and the upper panel as the break down of death cases by age group from 1990 to 2016. As we interact with the graph, it is clear that 0 - 5 age group is consistenly being the most vulnerable group against Malaria. This might be caused by the fact that this group has the lowest mobility, and it is very easy for them to be bitten by a mosquito when sleeping (also given the fact that at this age they have to spend most of their time sleeping). It also indirectly reflects that the child-care practices and resources are scarce in these countries. 
 Also surprisingly, almost half of the 10 countries have an increasing curve for the death cases in the 0 - 5 age group compared to 1990. This is not only alarming, but also flags a need to put in much more efforts and recourses to this group which is also the youngest and powerless. 
 
+```python
+{pts = alt.selection(type="single", encodings=['x'])
 
+line = alt.Chart(top_10_by_age).mark_line().encode(
+    x=alt.X('year:O'),
+    y=alt.Y('sum(deaths):Q',title = "Total Death Cases"),
+    color='age_group',
+    strokeDash='age_group',
+    order = 'year'
+).transform_filter(
+    pts)
+
+
+
+bar = alt.Chart(top_10_by_age).mark_bar().encode(
+    x=alt.X('entity:N', title = "Country"),
+    y=alt.Y('sum(deaths)', title = "Total Death Cases"),
+    color=alt.condition(pts, alt.ColorValue("skyblue"), alt.ColorValue("grey"))
+).properties(
+    width=550,
+    height=200
+).add_selection(pts)
+
+death_by_age_top10 = alt.vconcat(
+    line,
+    bar
+).properties(
+    title = "Death Cases in Top 10 Malaria-Hard-Hit Countries by Age Group" 
+    ).configure_title(
+    fontSize=15,
+    anchor='middle',
+    color='Black'
+)
+}
+```
 {{< rawhtml >}}
 </head>
 <body>
@@ -145,7 +215,39 @@ Also surprisingly, almost half of the 10 countries have an increasing curve for 
 Seeing all these staggering results, at this point it might be good to stop and think for a second: is this analysis doing justice for these countries? The next visualization may reveal some other insights.
 Below is the graph what depicts the incident of Malaria among 100,000 at risk population frm 2000 to 2015. Here, in fact we see that all countries have had good progress in the time frame, which means that for people at risk, the odds of them getting Malaria has been reduced. 
 
+```python
+{highlight = alt.selection(type='single', on='mouseover',
+                          fields=['Entity'], nearest=True)
 
+base = alt.Chart(incidents_top_10).encode(
+    x=alt.X('Year',scale=alt.Scale(zero=False)),
+    y=alt.Y('sum(Incidents per 100,000 at risk):Q',
+           title = "Incident per 1000 at risk"),
+    color=alt.Color("Entity",legend=alt.Legend(title="Country")),
+    tooltip = ["Entity","Year","Incidents per 100,000 at risk"]
+)
+
+points = base.mark_circle().encode(
+    opacity=alt.value(0)
+).add_selection(
+    highlight
+).properties(
+    width=500
+)
+
+lines = base.mark_line().encode(
+    size=alt.condition(~highlight, alt.value(1), alt.value(6)),
+)
+multi_highlight = points + lines
+multi_highlight = multi_highlight.properties(
+    title = "Incidents per 100000 population at risk in Top 10 Malaria-Hard-Hit Countries"
+    ).configure_title(
+    fontSize=15,
+    anchor='middle',
+    color='Black'
+    )
+}
+```
 {{< rawhtml >}}
 <body>
   <div id="vis3"></div>
