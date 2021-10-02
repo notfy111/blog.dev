@@ -55,8 +55,6 @@ puts markdown.to_html
 {{< /rawhtml >}}
 
 ### Death by age group
-
-
 {{< rawhtml >}}
 <head>
   <style>
@@ -95,7 +93,6 @@ puts markdown.to_html
 
 
 ### Incident
-
 {{< rawhtml >}}
 <head>
   <style>
