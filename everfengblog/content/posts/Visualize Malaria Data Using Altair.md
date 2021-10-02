@@ -79,39 +79,7 @@ This visualization is interactive. We can easily click on a country on the left 
 From this visualization, it is easy to notice that Uganda has definetely made some great and steady progress curtailing Malaria. Being the country that had the highest number of Malaria infection, it sucessfully reduced the case to about 1-fourth of what it had two decades ago. In contrast, countries such as Mali and Niger, althought having a relatively lower average death cases, did not have a significant reduction of death cases compared to 1990.
 
 Interestingly, Burkina Faso and Sierra Leone had a similar spike in death around 2004, which might be traced back to some of their major national practices back in that time. 
-```python
-{
-pts = alt.selection(type="single", encodings=['x'])
 
-line = alt.Chart(top_10_by_age).mark_line().encode(
-    x=alt.X('year:O'),
-    y=alt.Y('sum(deaths):Q',title = "Total Death Cases"),
-    color='age_group',
-    strokeDash='age_group',
-    order = 'year'
-).transform_filter(
-    pts)
-bar = alt.Chart(top_10_by_age).mark_bar().encode(
-    x=alt.X('entity:N', title = "Country"),
-    y=alt.Y('sum(deaths)', title = "Total Death Cases"),
-    color=alt.condition(pts, alt.ColorValue("skyblue"), alt.ColorValue("grey"))
-).properties(
-    width=550,
-    height=200
-).add_selection(pts)
-
-death_by_age_top10 = alt.vconcat(
-    line,
-    bar
-).properties(
-    title = "Death Cases in Top 10 Malaria-Hard-Hit Countries by Age Group" 
-    ).configure_title(
-    fontSize=15,
-    anchor='middle',
-    color='Black'
-)
-}
-```
 {{< rawhtml >}}
 <head>
   <style>
@@ -162,8 +130,6 @@ line = alt.Chart(top_10_by_age).mark_line().encode(
     order = 'year'
 ).transform_filter(
     pts)
-
-
 
 bar = alt.Chart(top_10_by_age).mark_bar().encode(
     x=alt.X('entity:N', title = "Country"),
