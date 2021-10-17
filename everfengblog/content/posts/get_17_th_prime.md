@@ -1,5 +1,5 @@
 ---
-title: "Get_17_th_prime"
+title: "First 10-digit Prime in 17 pi"
 date: 2021-10-17T15:48:13-04:00
 draft: false
 ---
