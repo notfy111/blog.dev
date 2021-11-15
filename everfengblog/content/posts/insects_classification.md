@@ -47,3 +47,7 @@ model.add(Dense(num_classes, activation='softmax'))
 This relatively simple architecture after 3 epochs of training is able to give satisfactory predictions. The evaluation results show that the model has accuracy, precision, recall all close to 0.98, with F1 score of 0.978.
 
 ## SHAP Interpretation
+Now we are able to see all the trained parameters, prediction results, and different types of evaluation metrics. But how did the model reach the decision that it made? What are the criteria for predicting a picture as bettles instead of dragon flies? 
+![](/Users/fengyi111/Desktop/Repos/blog.dev/everfengblog/images/shap.jpeg)
+What SHAP algorithm does is to use a game theoretic approach to explain the output of any machine learning model. Specifically, red pixels represent positive SHAP values that increase the probability of the class, while blue pixels represent negative SHAP values the reduce the probability of the class. 
+In this case, we see that the the upper left graph maps to the positive SHAP values for assigning this graph to class 0, which is beetles. It seems that it captures the the lower tail of the beetle as key defining features. 
